@@ -1,1 +1,7 @@
 compile=> cargo new hello_rust
+
+cargo install cargo-watch
+cargo watch -x run
+
+./main  
+rustc main.rs
