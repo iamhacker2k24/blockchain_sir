@@ -1,0 +1,11 @@
+compile=> cargo new hello_rust
+
+cargo install cargo-watch
+cargo watch -x run
+
+./main  
+rustc main.rs
+
+docs=>https://app.notion.com/p/Rust-2733a78e0e2280369ed2efa4a81b3310
+
+https://app.notion.com/p/Test-and-Deploy-NoteApp-2a53a78e0e22801b8631c4f56769b14d => test and deploy
