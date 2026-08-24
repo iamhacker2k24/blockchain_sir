@@ -32,3 +32,6 @@ contract varscope2 is basic {
 // https://www.geeksforgeeks.org/solidity/storage-vs-memory-in-solidity/
 
 // https://www.youtube.com/watch?v=zUWgF7A5_7c&list=PLR0uCBk15bq96j_R_cS1Rwg96rfDAfCmM&index=10
+
+
+
