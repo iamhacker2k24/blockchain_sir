@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+artifacts/
+cache/
+coverage/
+typechain-types/
+
+
+dist/
+logs/
+*.log
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
