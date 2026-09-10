@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 
 const WalletSection = () => {
   const [address, setAddress] = useState("");
-
+  const [balance, setBalance] = useState(null);
   const connectWallet = async () => {
     try {
       // Check MetaMask
@@ -53,13 +53,9 @@ const WalletSection = () => {
                     decimals: 18,
                   },
 
-                  rpcUrls: [
-                    "https://rpc-amoy.polygon.technology/",
-                  ],
+                  rpcUrls: ["https://rpc-amoy.polygon.technology/"],
 
-                  blockExplorerUrls: [
-                    "https://amoy.polygonscan.com/",
-                  ],
+                  blockExplorerUrls: ["https://amoy.polygonscan.com/"],
                 },
               ],
             });
@@ -77,8 +73,9 @@ const WalletSection = () => {
 
       // Get wallet address
       const walletAddress = await signer.getAddress();
-
+      const Balance = ethers.utils.formatEthers(await signer.getBalance());
       setAddress(walletAddress);
+      setBalance(Balance)
 
       console.log("Connected:", walletAddress);
     } catch (error) {
@@ -91,11 +88,11 @@ const WalletSection = () => {
       {address
         ? `Wallet: ${address.slice(0, 6)}...${address.slice(-4)}`
         : "Connect Wallet"}
+        {balance}
     </div>
   );
 };
 
 export default WalletSection;
-
 
 // 3.13
