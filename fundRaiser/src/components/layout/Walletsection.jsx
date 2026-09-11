@@ -73,9 +73,10 @@ const WalletSection = () => {
 
       // Get wallet address
       const walletAddress = await signer.getAddress();
-      const Balance = ethers.utils.formatEthers(await signer.getBalance());
+      const Balance = await provider.getBalance(walletAddress);
       setAddress(walletAddress);
       setBalance(Balance)
+      console.log(Balance)
 
       console.log("Connected:", walletAddress);
     } catch (error) {
@@ -88,7 +89,7 @@ const WalletSection = () => {
       {address
         ? `Wallet: ${address.slice(0, 6)}...${address.slice(-4)}`
         : "Connect Wallet"}
-        {balance}
+       <h1> {balance}</h1>
     </div>
   );
 };
