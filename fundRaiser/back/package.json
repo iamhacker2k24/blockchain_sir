@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "init": "^0.1.2",
+    "nodemon": "^3.1.14",
+    "pinata": "^2.5.6"
+  }
+}

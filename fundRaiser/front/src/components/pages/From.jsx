@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { create as IPFSHTTPClient } from "ipfs-http-client";
+// import { create as IPFSHTTPClient } from "ipfs-http-client";
 import pinata from "../../utilts/pinata";
 
 const From = () => {
@@ -12,26 +12,32 @@ const From = () => {
   // const [storuUrl,setStoryUrl]=useState("")
   //  const [photoUrl,setPhotoUrl]=useState("")
 
-  const uploadFiles = async () => {
-    console.log("working")
-    try {
-      if (!photo) {
-        alert("Please select an image");
-        return;
-      }
+ const uploadFiles = async () => {
+  console.log("Upload started");
 
-      // Upload image
-      const imageUpload = await pinata.upload.public.file(photo);
-      console.log(imageUpload);
-      const photoCID = imageUpload.cid;
-
-      console.log("Photo CID:", photoCID);
-
-      return photoCID;
-    } catch (error) {
-      console.error("IPFS upload error:", error);
+  try {
+    if (!photo) {
+      alert("Please select an image");
+      return;
     }
-  };
+
+    console.log("Selected file:", photo.name);
+    console.log("File size:", photo.size);
+    console.log("File type:", photo.type);
+
+    const imageUpload = await pinata.upload.public.file(photo);
+
+    console.log("Pinata response:", imageUpload);
+
+    const photoCID = imageUpload.cid;
+
+    console.log("Photo CID:", photoCID);
+
+    return photoCID;
+  } catch (error) {
+    console.error("IPFS upload error:", error);
+  }
+};
 
   console.log(camaignTittle, number, story, category, photo);
   return (
