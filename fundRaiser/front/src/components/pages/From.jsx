@@ -1,44 +1,72 @@
 import React, { useState } from "react";
-// import { create as IPFSHTTPClient } from "ipfs-http-client";
-import pinata from "../../utilts/pinata";
-
+import axios from "axios";
 const From = () => {
   const [camaignTittle, setCampaignTittle] = useState("");
   const [number, setNumber] = useState("");
   const [story, setStory] = useState("");
   const [category, setCategory] = useState("");
   const [photo, setPhoto] = useState("");
+  const [imageCid, setImageCid] = useState("");
+  const [storyCid, setStoryCid] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
-  // const [storuUrl,setStoryUrl]=useState("")
-  //  const [photoUrl,setPhotoUrl]=useState("")
+  const uploadFiles = async () => {
+    try {
+      if (!photo && !story.trim()) {
+        alert("Please select an image or write a story first");
+        return;
+      }
 
- const uploadFiles = async () => {
-  console.log("Upload started");
+      setIsUploading(true);
 
-  try {
-    if (!photo) {
-      alert("Please select an image");
-      return;
+      // Create FormData
+      const formData = new FormData();
+
+      // Add the selected image if present
+      if (photo) {
+        formData.append("photo", photo);
+      }
+
+      // Add the story text if present
+      if (story.trim()) {
+        formData.append("story", story);
+      }
+
+      // Send to backend
+      const response = await fetch("http://localhost:3000/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || data.msg || "Upload failed");
+      }
+
+      if (data.imageCid) {
+        setImageCid(data.imageCid);
+        console.log("Image CID:", data.imageCid);
+      }
+
+      if (data.storyCid) {
+        setStoryCid(data.storyCid);
+        console.log("Story CID:", data.storyCid);
+      }
+
+      let successMsg = "Uploaded successfully to IPFS!";
+      if (data.imageCid) successMsg += `\n• Image CID: ${data.imageCid}`;
+      if (data.storyCid) successMsg += `\n• Story CID: ${data.storyCid}`;
+
+      alert(successMsg);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert(`Upload failed: ${error.message}`);
+    } finally {
+      setIsUploading(false);
     }
-
-    console.log("Selected file:", photo.name);
-    console.log("File size:", photo.size);
-    console.log("File type:", photo.type);
-
-    const imageUpload = await pinata.upload.public.file(photo);
-
-    console.log("Pinata response:", imageUpload);
-
-    const photoCID = imageUpload.cid;
-
-    console.log("Photo CID:", photoCID);
-
-    return photoCID;
-  } catch (error) {
-    console.error("IPFS upload error:", error);
-  }
-};
-
+  };
+  // sendData();
   console.log(camaignTittle, number, story, category, photo);
   return (
     <>
@@ -105,6 +133,11 @@ const From = () => {
                     setStory(e.target.value);
                   }}
                 />
+                {storyCid && (
+                  <p className="mt-1.5 text-xs text-emerald-400 font-mono">
+                    ✓ Story stored on IPFS: {storyCid}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -144,6 +177,11 @@ const From = () => {
                     }}
                   />
                 </div>
+                {imageCid && (
+                  <p className="mt-1.5 text-xs text-emerald-400 font-mono">
+                    ✓ Image stored on IPFS: {imageCid}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -157,10 +195,11 @@ const From = () => {
               <div className="flex gap-3">
                 <button
                   type="button"
-                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/10 hover:text-white"
+                  disabled={isUploading}
+                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
                   onClick={uploadFiles}
                 >
-                  Upload to IPFS
+                  {isUploading ? "Uploading to IPFS..." : "Upload to IPFS"}
                 </button>
 
                 <button
