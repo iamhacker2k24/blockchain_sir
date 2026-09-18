@@ -40,7 +40,8 @@ const From = () => {
     if (photo) formData.append("photo", photo);
     if (story.trim()) formData.append("story", story.trim());
 
-    const response = await fetch("http://localhost:3000/upload", {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    const response = await fetch(`${backendUrl}/upload`, {
       method: "POST",
       body: formData,
     });

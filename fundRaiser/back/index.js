@@ -8,11 +8,8 @@ const { uploadToPinata, uploadTextToPinata } = require("./pinata/pinataupload.js
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-  })
-);
+// Allow requests from any frontend (local, Vercel, etc.)
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -77,6 +74,7 @@ app.post("/upload", upload.single("photo"), async (req, res) => {
     });
   }
 });
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
