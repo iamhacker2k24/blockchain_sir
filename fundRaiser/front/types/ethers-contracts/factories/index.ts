@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Campaign__factory } from './Campaign__factory.js';
+export { CampaignFactory__factory } from './CampaignFactory__factory.js';
 export { Campinfactory__factory } from './Campinfactory__factory.js';

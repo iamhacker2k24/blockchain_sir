@@ -5,7 +5,7 @@ import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, I
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "./common.js"
   
 
-  export interface CampinfactoryInterface extends Interface {
+  export interface CampaignFactoryInterface extends Interface {
     getFunction(nameOrSignature: "createCampaign" | "createcampain" | "deployedCampaigns" | "deployedcampaigns" | "getDeployedCampaigns"): FunctionFragment;
 
     getEvent(nameOrSignatureOrTopic: "CampaignCreated"): EventFragment;
@@ -36,12 +36,12 @@ decodeFunctionResult(functionFragment: 'getDeployedCampaigns', data: BytesLike):
 
   
 
-  export interface Campinfactory extends BaseContract {
+  export interface CampaignFactory extends BaseContract {
     
-    connect(runner?: ContractRunner | null): Campinfactory;
+    connect(runner?: ContractRunner | null): CampaignFactory;
     waitForDeployment(): Promise<this>;
 
-    interface: CampinfactoryInterface;
+    interface: CampaignFactoryInterface;
 
     
   queryFilter<TCEvent extends TypedContractEvent>(

@@ -2,7 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Campaign } from './Campaign.js';
+export type { CampaignFactory } from './CampaignFactory.js';
 export type { Campinfactory } from './Campinfactory.js';
 export * as factories from './factories/index.js';
 export { Campaign__factory } from './factories/Campaign__factory.js';
+export { CampaignFactory__factory } from './factories/CampaignFactory__factory.js';
 export { Campinfactory__factory } from './factories/Campinfactory__factory.js';

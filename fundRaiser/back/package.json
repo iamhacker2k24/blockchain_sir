@@ -1,4 +1,10 @@
 {
+  "name": "fundraiser-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
     "axios": "^1.20.0",
     "cors": "^2.8.6",

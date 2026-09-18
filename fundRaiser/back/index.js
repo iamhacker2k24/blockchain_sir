@@ -20,6 +20,15 @@ const upload = multer({
   storage: multer.memoryStorage(),
 });
 
+// Health check endpoints
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "FundRaiser IPFS Backend is running" });
+});
+
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 app.post("/upload", upload.single("photo"), async (req, res) => {
   try {
     const hasPhoto = Boolean(req.file);

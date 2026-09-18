@@ -11,15 +11,19 @@ import * as Contracts from "./index.js";
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
   getContractFactory(name: 'Campaign', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Campaign__factory>
+getContractFactory(name: 'CampaignFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.CampaignFactory__factory>
 getContractFactory(name: 'Campinfactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Campinfactory__factory>
 
   getContractAt(name: 'Campaign', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Campaign>
+getContractAt(name: 'CampaignFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.CampaignFactory>
 getContractAt(name: 'Campinfactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Campinfactory>
 
   deployContract(name: 'Campaign', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Campaign>
+deployContract(name: 'CampaignFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactory>
 deployContract(name: 'Campinfactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Campinfactory>
 
   deployContract(name: 'Campaign', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Campaign>
+deployContract(name: 'CampaignFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.CampaignFactory>
 deployContract(name: 'Campinfactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Campinfactory>
 
     // default types

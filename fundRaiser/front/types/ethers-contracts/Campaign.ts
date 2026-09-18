@@ -4,34 +4,55 @@
 import type { BaseContract, BigNumberish, BytesLike, FunctionFragment, Result, Interface, EventFragment, AddressLike, ContractRunner, ContractMethod, Listener } from "ethers"
 import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, TypedLogDescription, TypedListener, TypedContractMethod } from "./common.js"
   
+export declare namespace Campaign {
+      
+    export type DonationStruct = {donor: AddressLike, amount: BigNumberish, timestamp: BigNumberish}
+
+    export type DonationStructOutput = [donor: string, amount: bigint, timestamp: bigint] & {donor: string, amount: bigint, timestamp: bigint }
+  
+    }
 
   export interface CampaignInterface extends Interface {
-    getFunction(nameOrSignature: "donate" | "image" | "owner" | "recivedAmout" | "requireedAmouut" | "story" | "tittle"): FunctionFragment;
+    getFunction(nameOrSignature: "category" | "donate" | "donations" | "getCampaignSummary" | "getDonations" | "image" | "owner" | "receivedAmount" | "recivedAmout" | "requiredAmount" | "requireedAmouut" | "story" | "title" | "tittle"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "donated"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Donated"): EventFragment;
 
-    encodeFunctionData(functionFragment: 'donate', values?: undefined): string;
+    encodeFunctionData(functionFragment: 'category', values?: undefined): string;
+encodeFunctionData(functionFragment: 'donate', values?: undefined): string;
+encodeFunctionData(functionFragment: 'donations', values: [BigNumberish]): string;
+encodeFunctionData(functionFragment: 'getCampaignSummary', values?: undefined): string;
+encodeFunctionData(functionFragment: 'getDonations', values?: undefined): string;
 encodeFunctionData(functionFragment: 'image', values?: undefined): string;
 encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
+encodeFunctionData(functionFragment: 'receivedAmount', values?: undefined): string;
 encodeFunctionData(functionFragment: 'recivedAmout', values?: undefined): string;
+encodeFunctionData(functionFragment: 'requiredAmount', values?: undefined): string;
 encodeFunctionData(functionFragment: 'requireedAmouut', values?: undefined): string;
 encodeFunctionData(functionFragment: 'story', values?: undefined): string;
+encodeFunctionData(functionFragment: 'title', values?: undefined): string;
 encodeFunctionData(functionFragment: 'tittle', values?: undefined): string;
 
-    decodeFunctionResult(functionFragment: 'donate', data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'category', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'donate', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'donations', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getCampaignSummary', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'getDonations', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'image', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'receivedAmount', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'recivedAmout', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'requiredAmount', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'requireedAmouut', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'story', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'title', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'tittle', data: BytesLike): Result;
   }
 
   
-    export namespace donatedEvent {
-      export type InputTuple = [donar: AddressLike, amount: BigNumberish, timestamp: BigNumberish];
-      export type OutputTuple = [donar: string, amount: bigint, timestamp: bigint];
-      export interface OutputObject {donar: string, amount: bigint, timestamp: bigint };
+    export namespace DonatedEvent {
+      export type InputTuple = [donor: AddressLike, amount: BigNumberish, timestamp: BigNumberish];
+      export type OutputTuple = [donor: string, amount: bigint, timestamp: bigint];
+      export interface OutputObject {donor: string, amount: bigint, timestamp: bigint };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -74,10 +95,42 @@ decodeFunctionResult(functionFragment: 'tittle', data: BytesLike): Result;
 
     
     
+    category: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
     donate: TypedContractMethod<
       [],
       [void],
       'payable'
+    >
+    
+
+    
+    donations: TypedContractMethod<
+      [arg0: BigNumberish, ],
+      [[string, bigint, bigint] & {donor: string, amount: bigint, timestamp: bigint }],
+      'view'
+    >
+    
+
+    
+    getCampaignSummary: TypedContractMethod<
+      [],
+      [[string, bigint, bigint, string, string, string, string, bigint] & {_title: string, _requiredAmount: bigint, _receivedAmount: bigint, _image: string, _story: string, _category: string, _owner: string, _donationsCount: bigint }],
+      'view'
+    >
+    
+
+    
+    getDonations: TypedContractMethod<
+      [],
+      [Campaign.DonationStructOutput[]],
+      'view'
     >
     
 
@@ -98,7 +151,23 @@ decodeFunctionResult(functionFragment: 'tittle', data: BytesLike): Result;
     
 
     
+    receivedAmount: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
     recivedAmout: TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >
+    
+
+    
+    requiredAmount: TypedContractMethod<
       [],
       [bigint],
       'view'
@@ -122,6 +191,14 @@ decodeFunctionResult(functionFragment: 'tittle', data: BytesLike): Result;
     
 
     
+    title: TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >
+    
+
+    
     tittle: TypedContractMethod<
       [],
       [string],
@@ -132,10 +209,30 @@ decodeFunctionResult(functionFragment: 'tittle', data: BytesLike): Result;
 
     getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
-    getFunction(nameOrSignature: 'donate'): TypedContractMethod<
+    getFunction(nameOrSignature: 'category'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
+getFunction(nameOrSignature: 'donate'): TypedContractMethod<
       [],
       [void],
       'payable'
+    >;
+getFunction(nameOrSignature: 'donations'): TypedContractMethod<
+      [arg0: BigNumberish, ],
+      [[string, bigint, bigint] & {donor: string, amount: bigint, timestamp: bigint }],
+      'view'
+    >;
+getFunction(nameOrSignature: 'getCampaignSummary'): TypedContractMethod<
+      [],
+      [[string, bigint, bigint, string, string, string, string, bigint] & {_title: string, _requiredAmount: bigint, _receivedAmount: bigint, _image: string, _story: string, _category: string, _owner: string, _donationsCount: bigint }],
+      'view'
+    >;
+getFunction(nameOrSignature: 'getDonations'): TypedContractMethod<
+      [],
+      [Campaign.DonationStructOutput[]],
+      'view'
     >;
 getFunction(nameOrSignature: 'image'): TypedContractMethod<
       [],
@@ -147,7 +244,17 @@ getFunction(nameOrSignature: 'owner'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'receivedAmount'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
 getFunction(nameOrSignature: 'recivedAmout'): TypedContractMethod<
+      [],
+      [bigint],
+      'view'
+    >;
+getFunction(nameOrSignature: 'requiredAmount'): TypedContractMethod<
       [],
       [bigint],
       'view'
@@ -162,18 +269,23 @@ getFunction(nameOrSignature: 'story'): TypedContractMethod<
       [string],
       'view'
     >;
+getFunction(nameOrSignature: 'title'): TypedContractMethod<
+      [],
+      [string],
+      'view'
+    >;
 getFunction(nameOrSignature: 'tittle'): TypedContractMethod<
       [],
       [string],
       'view'
     >;
 
-    getEvent(key: 'donated'): TypedContractEvent<donatedEvent.InputTuple, donatedEvent.OutputTuple, donatedEvent.OutputObject>;
+    getEvent(key: 'Donated'): TypedContractEvent<DonatedEvent.InputTuple, DonatedEvent.OutputTuple, DonatedEvent.OutputObject>;
 
     filters: {
       
-      'donated(address,uint256,uint256)': TypedContractEvent<donatedEvent.InputTuple, donatedEvent.OutputTuple, donatedEvent.OutputObject>;
-      donated: TypedContractEvent<donatedEvent.InputTuple, donatedEvent.OutputTuple, donatedEvent.OutputObject>;
+      'Donated(address,uint256,uint256)': TypedContractEvent<DonatedEvent.InputTuple, DonatedEvent.OutputTuple, DonatedEvent.OutputObject>;
+      Donated: TypedContractEvent<DonatedEvent.InputTuple, DonatedEvent.OutputTuple, DonatedEvent.OutputObject>;
     
     };
   }
