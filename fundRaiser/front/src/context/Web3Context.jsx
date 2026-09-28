@@ -39,7 +39,7 @@ export const SUPPORTED_NETWORKS = {
   31337: {
     chainId: "0x7a69", // Hexadecimal for 31337
     chainName: "Hardhat Localhost",
-    nativeCurrency: { name: "GO", symbol: "ETH", decimals: 18 },
+    nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
     rpcUrls: ["http://127.0.0.1:8545/"],
     blockExplorerUrls: [],
   },
@@ -99,11 +99,20 @@ export const Web3Provider = ({ children }) => {
       return true;
     } catch (switchError) {
       // Error code 4902 indicates that the network has not yet been added to MetaMask
-      if (switchError.code === 4902) {
+      if (switchError.code === 4902 || switchError?.data?.originalError?.code === 4902) {
         try {
+          const addParams = {
+            chainId: netConfig.chainId,
+            chainName: netConfig.chainName,
+            nativeCurrency: netConfig.nativeCurrency,
+            rpcUrls: netConfig.rpcUrls,
+          };
+          if (netConfig.blockExplorerUrls && netConfig.blockExplorerUrls.length > 0) {
+            addParams.blockExplorerUrls = netConfig.blockExplorerUrls;
+          }
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
-            params: [netConfig],
+            params: [addParams],
           });
           return true;
         } catch (addError) {

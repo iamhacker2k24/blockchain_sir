@@ -84,16 +84,26 @@ const CampaignDetails = () => {
 
   if (error || !campaign) {
     return (
-      <div className="py-20 text-center space-y-4">
-        <div className="text-4xl">❌</div>
+      <div className="py-20 text-center space-y-4 max-w-lg mx-auto">
+        <div className="text-4xl">⚠️</div>
         <h2 className="text-xl font-bold text-white">Campaign Not Found</h2>
-        <p className="text-xs text-red-400 max-w-md mx-auto">{error || "Could not find campaign at this address."}</p>
-        <Link
-          to="/"
-          className="inline-block rounded-xl bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/15"
-        >
-          ← Back to All Campaigns
-        </Link>
+        <p className="text-xs text-red-400 font-mono whitespace-pre-line bg-black/40 p-4 rounded-xl border border-red-500/20">
+          {error || "Could not find campaign at this address."}
+        </p>
+        <div className="flex justify-center gap-3 pt-2">
+          <button
+            onClick={loadDetails}
+            className="rounded-xl bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-500 transition"
+          >
+            🔄 Try Again
+          </button>
+          <Link
+            to="/"
+            className="rounded-xl bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/15 transition"
+          >
+            ← Back to All Campaigns
+          </Link>
+        </div>
       </div>
     );
   }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useWeb3 } from "../../context/Web3Context";
+import { useWeb3, SUPPORTED_NETWORKS } from "../../context/Web3Context";
 import { fetchAllCampaigns, getCampaignContract, getIpfsUrl } from "../../services/contractService";
+import contractConfig from "../../contracts/contractConfig.json";
 import { ethers } from "ethers";
 
 const MyCampaigns = () => {
@@ -11,6 +12,10 @@ const MyCampaigns = () => {
   const [backedCampaigns, setBackedCampaigns] = useState([]);
   const [activeTab, setActiveTab] = useState("created"); // "created" | "backed"
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const targetChainId = contractConfig.chainId || 31337;
+  const currencySymbol = SUPPORTED_NETWORKS[targetChainId]?.nativeCurrency?.symbol || "ETH";
 
   const loadDashboardData = async () => {
     if (!account) {
@@ -20,6 +25,7 @@ const MyCampaigns = () => {
 
     try {
       setLoading(true);
+      setError(null);
       const all = await fetchAllCampaigns(provider);
 
       // 1. Filter campaigns created by this wallet
@@ -59,6 +65,7 @@ const MyCampaigns = () => {
       setBackedCampaigns(backed);
     } catch (err) {
       console.error("Dashboard data load error:", err);
+      setError(err.message || "Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -110,6 +117,20 @@ const MyCampaigns = () => {
         </p>
       </div>
 
+      {/* Error Notice */}
+      {error && !loading && (
+        <div className="rounded-2xl border border-red-500/30 bg-red-950/20 p-5 text-red-200 text-xs space-y-2">
+          <p className="font-bold text-red-100">⚠️ Unable to fetch your campaigns from the blockchain</p>
+          <p className="font-mono text-red-300/90 whitespace-pre-line">{error}</p>
+          <button
+            onClick={loadDashboardData}
+            className="mt-2 rounded-lg bg-red-500/20 border border-red-500/40 px-3 py-1.5 font-semibold text-red-200 hover:bg-red-500/30 transition"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-white/10 bg-[#12141e] p-5 space-y-1">
@@ -120,7 +141,7 @@ const MyCampaigns = () => {
         <div className="rounded-2xl border border-white/10 bg-[#12141e] p-5 space-y-1">
           <p className="text-xs font-medium text-gray-400">Total Funds Received</p>
           <p className="text-3xl font-extrabold text-emerald-400 font-mono">
-            {totalRaised} POL
+            {totalRaised} {currencySymbol}
           </p>
         </div>
 

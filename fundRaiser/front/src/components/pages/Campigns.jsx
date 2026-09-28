@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchAllCampaigns, getIpfsUrl } from "../../services/contractService";
-import { useWeb3 } from "../../context/Web3Context";
+import { fetchAllCampaigns, getIpfsUrl, getActiveFactoryAddress } from "../../services/contractService";
+import { useWeb3, SUPPORTED_NETWORKS } from "../../context/Web3Context";
 import contractConfig from "../../contracts/contractConfig.json";
 
 const CATEGORIES = [
@@ -16,13 +16,21 @@ const CATEGORIES = [
 ];
 
 const Campigns = () => {
-  const { provider, account, chainId } = useWeb3();
+  const { provider, account, chainId, switchNetwork } = useWeb3();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [customAddress, setCustomAddress] = useState(contractConfig.factoryAddress || "");
+  const [customAddress, setCustomAddress] = useState(
+    localStorage.getItem("FUNDRAISER_FACTORY_ADDRESS") || contractConfig.factoryAddress || ""
+  );
+
+  const targetChainId = contractConfig.chainId || 31337;
+  const targetNetworkConfig = SUPPORTED_NETWORKS[targetChainId];
+  const targetNetworkName = targetNetworkConfig?.chainName || contractConfig.network || "Hardhat Localhost";
+  const currencySymbol = targetNetworkConfig?.nativeCurrency?.symbol || "POL";
+  const isNetworkMatch = !chainId || chainId === targetChainId;
 
   // Load campaigns from blockchain
   const loadCampaigns = async () => {
@@ -31,7 +39,7 @@ const Campigns = () => {
       setError(null);
 
       // Check if factory is configured
-      const activeAddress = customAddress || contractConfig.factoryAddress;
+      const activeAddress = getActiveFactoryAddress();
       if (!activeAddress) {
         setCampaigns([]);
         setLoading(false);
@@ -77,8 +85,8 @@ const Campigns = () => {
 
         <div className="max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            Live on Polygon Amoy Testnet
+            <span className={`h-2 w-2 rounded-full ${isNetworkMatch ? "bg-emerald-400" : "bg-amber-400"} animate-pulse`} />
+            Live on {targetNetworkName}
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
             Fund the Future, <br />
@@ -99,19 +107,19 @@ const Campigns = () => {
           </div>
           <div>
             <p className="text-xs font-medium text-gray-400">Total Funds Raised</p>
-            <p className="text-2xl sm:text-3xl font-bold text-violet-400 mt-0.5">{totalRaised} POL</p>
+            <p className="text-2xl sm:text-3xl font-bold text-violet-400 mt-0.5">{totalRaised} {currencySymbol}</p>
           </div>
           <div className="col-span-2 sm:col-span-1">
             <p className="text-xs font-medium text-gray-400">Smart Contract</p>
-            <p className="text-xs font-mono text-gray-300 mt-2 truncate">
-              {contractConfig.factoryAddress || "Not deployed yet"}
+            <p className="text-xs font-mono text-gray-300 mt-2 truncate" title={customAddress || contractConfig.factoryAddress}>
+              {customAddress || contractConfig.factoryAddress || "Not deployed yet"}
             </p>
           </div>
         </div>
       </div>
 
       {/* Contract Configuration Notice if Not Yet Deployed */}
-      {!contractConfig.factoryAddress && (
+      {(!contractConfig.factoryAddress && !customAddress) && (
         <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-amber-200">
           <div className="flex items-start gap-3">
             <span className="text-xl">⚠️</span>
@@ -203,17 +211,102 @@ const Campigns = () => {
         </div>
       )}
 
-      {/* Error Message */}
+      {/* Error & Troubleshooting Card */}
       {error && !loading && (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-center text-red-300 space-y-2">
-          <p className="font-semibold text-red-200">Unable to load campaigns</p>
-          <p className="text-xs">{error}</p>
-          <button
-            onClick={loadCampaigns}
-            className="mt-3 rounded-xl bg-red-500/20 border border-red-500/40 px-4 py-2 text-xs font-semibold text-red-200 hover:bg-red-500/30"
-          >
-            Try Again
-          </button>
+        <div className="rounded-2xl border border-red-500/30 bg-red-950/20 p-6 sm:p-8 text-red-200 space-y-5 shadow-xl">
+          <div className="flex items-start gap-4">
+            <span className="text-3xl">⚠️</span>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-red-100">Unable to Load Campaigns from Blockchain</h3>
+              <p className="text-xs text-red-300/90 whitespace-pre-line font-mono bg-black/40 p-3 rounded-xl border border-red-500/20">
+                {error}
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Troubleshooting Actions */}
+          <div className="border-t border-red-500/20 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {/* Action 1: Network Mismatch */}
+            {!isNetworkMatch && chainId && (
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4 space-y-2">
+                <p className="font-semibold text-white">🔄 Network Mismatch Detected</p>
+                <p className="text-gray-400">
+                  Your wallet is on <span className="text-amber-300 font-mono">{SUPPORTED_NETWORKS[chainId]?.chainName || `Chain ${chainId}`}</span>, but the contract is configured for <span className="text-violet-300 font-mono">{targetNetworkName} (Chain {targetChainId})</span>.
+                </p>
+                <button
+                  onClick={() => switchNetwork(targetChainId)}
+                  className="rounded-lg bg-violet-600 px-4 py-2 font-bold text-white shadow hover:bg-violet-500 transition"
+                >
+                  Switch Network to {targetNetworkName}
+                </button>
+              </div>
+            )}
+
+            {/* Action 2: Hardhat Localhost Helper */}
+            {targetChainId === 31337 && (
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4 space-y-2 col-span-1 md:col-span-2">
+                <p className="font-semibold text-white">💻 Hardhat Localhost Instructions</p>
+                <p className="text-gray-400">
+                  Hardhat local nodes reset on restart. If your node was restarted, execute these two commands in your terminal:
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 font-mono text-xs">
+                  <div className="flex-1 rounded-lg bg-black/60 border border-white/10 p-2 text-violet-300 select-all">
+                    1. npx hardhat node
+                  </div>
+                  <div className="flex-1 rounded-lg bg-black/60 border border-white/10 p-2 text-indigo-300 select-all">
+                    2. npx hardhat run scripts/Depoly.ts --network localhost
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action 3: Override Contract Address */}
+            <div className="rounded-xl border border-white/10 bg-black/30 p-4 space-y-2 col-span-1 md:col-span-2">
+              <p className="font-semibold text-white">🎯 Override Contract Address</p>
+              <p className="text-gray-400">
+                If you deployed to a custom or newly generated address, paste it below to link it immediately:
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="text"
+                  placeholder="0x... Factory Address"
+                  value={customAddress}
+                  onChange={(e) => setCustomAddress(e.target.value)}
+                  className="flex-1 rounded-lg border border-white/20 bg-black/50 px-3 py-2 text-xs font-mono text-white outline-none focus:border-violet-500"
+                />
+                <button
+                  onClick={() => {
+                    localStorage.setItem("FUNDRAISER_FACTORY_ADDRESS", customAddress.trim());
+                    loadCampaigns();
+                  }}
+                  className="rounded-lg bg-emerald-600 px-4 py-2 font-bold text-white hover:bg-emerald-500 transition text-xs"
+                >
+                  Save & Reload
+                </button>
+                {localStorage.getItem("FUNDRAISER_FACTORY_ADDRESS") && (
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("FUNDRAISER_FACTORY_ADDRESS");
+                      setCustomAddress(contractConfig.factoryAddress || "");
+                      loadCampaigns();
+                    }}
+                    className="rounded-lg bg-white/10 px-3 py-2 font-semibold text-gray-300 hover:bg-white/20 transition text-xs"
+                  >
+                    Reset to Default
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-3">
+            <button
+              onClick={loadCampaigns}
+              className="rounded-xl bg-red-500/20 border border-red-500/40 px-5 py-2 text-xs font-semibold text-red-200 hover:bg-red-500/30 transition"
+            >
+              🔄 Try Again
+            </button>
+          </div>
         </div>
       )}
 
